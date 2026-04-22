@@ -1,0 +1,72 @@
+name: API Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Start API
+        run: |
+          docker run -d -p 3000:3000 ghcr.io/danielsilva-loanpro/sdet-interview-challenge:latest
+          sleep 5
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run dev tests
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
+          ENV: dev
+        run: pytest tests/test_users.py -v --alluredir=allure-results
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-dev
+          path: allure-results
+
+  test-prod:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Start API
+        run: |
+          docker run -d -p 3000:3000 ghcr.io/danielsilva-loanpro/sdet-interview-challenge:latest
+          sleep 5
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run prod tests
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
+          ENV: prod
+        run: pytest tests/test_users.py -v --alluredir=allure-results
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-prod
+          path: allure-results
