@@ -30,6 +30,8 @@ jobs:
           BASE_URL: ${{ secrets.BASE_URL }}
           AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
           ENV: dev
+          CREATE_GITHUB_ISSUES: "true"
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pytest tests/test_users.py -v --alluredir=allure-results
 
       - name: Upload Allure results
@@ -62,6 +64,8 @@ jobs:
           BASE_URL: ${{ secrets.BASE_URL }}
           AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
           ENV: prod
+          CREATE_GITHUB_ISSUES: "true"
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pytest tests/test_users.py -v --alluredir=allure-results
 
       - name: Upload Allure results
@@ -108,4 +112,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-report
-                
