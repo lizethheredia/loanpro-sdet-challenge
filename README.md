@@ -31,3 +31,26 @@ source venv/bin/activate
 pip install -r requirements.txt
 pytest tests/test_users.py -v
 ```
+
+# Run tests with Allure
+pytest tests/test_users.py -v --alluredir=allure-results
+
+# Generate and open report
+allure serve allure-results
+
+
+## Performance Testing
+
+Load tests built with Locust against all endpoints.
+
+**Key findings at 10 concurrent users:**
+- `GET /dev/users` → 0% failures, median 9ms ✅
+- `GET /dev/users/{email}` → 100% failure rate 🚨 (confirms Bug #2 — 500 instead of 404)
+
+**Run locally:**
+```bash
+pip install locust
+locust --host=http://localhost:3001
+```
+
+Open http://localhost:8089
